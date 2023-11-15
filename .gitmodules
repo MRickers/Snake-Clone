@@ -1,0 +1,3 @@
+[submodule "GameKit"]
+	path = GameKit
+	url = git@github.com:MRickers/GameKit.git
