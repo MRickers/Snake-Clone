@@ -1,4 +1,5 @@
 #include "intro.hpp"
+#include <spdlog/spdlog.h>
 
 snake::IntroState::IntroState(gk::SharedContextPtr sharedContext) : m_ctx{sharedContext}
 {
@@ -31,6 +32,8 @@ void snake::IntroState::changeState([[maybe_unused]] const gk::EventDetails &)
 
 void snake::IntroState::onDestroy()
 {
+    m_ctx->inputHandler->RemoveBinding(StateType::INTRO, "IntroContinue");
+    m_ctx->inputHandler->RemoveCallback(StateType::INTRO, "IntroContinue");
 }
 
 void snake::IntroState::activate()

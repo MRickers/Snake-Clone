@@ -1,6 +1,5 @@
 #include <spdlog/spdlog.h>
 #include <GameKit/App.hpp>
-#include "states/intro.hpp"
 #include "states/main.hpp"
 int main()
 {
@@ -16,19 +15,14 @@ int main()
         std::make_shared<gk::SharedContext>(inputHandler, stateMachine, app);
 
     stateMachine->registerState(
-        StateType::INTRO,
-        [sharedContext, &windowSize]() -> gk::BaseStatePtr
-        { return std::make_unique<snake::IntroState>(sharedContext); });
-
-    stateMachine->registerState(
         StateType::MAIN,
         [sharedContext]() -> gk::BaseStatePtr
         { return std::make_unique<snake::MainState>(sharedContext); });
 
     app->setInputHandler(inputHandler);
     app->setStateMachine(stateMachine);
-    stateMachine->switchTo(StateType::INTRO);
-
+    stateMachine->switchTo(StateType::MAIN);
+    inputHandler->setCurrentState(StateType::MAIN);
     try
     {
         app->run();

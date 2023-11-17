@@ -4,13 +4,28 @@
 void snake::MainState::onCreate()
 {
     const auto [x, y] = m_buttonPos.Get();
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < buttonCount; ++i)
     {
         const auto buttonPos =
             gk::Vector2D{x, y + (i * (m_buttonSize.GetY() + m_buttonPadding))};
 
         m_shapes[i].m_pos = buttonPos + m_buttonSize / 2;
         m_shapes[i].m_size = m_buttonSize;
+        m_textBoxes[i].setPos({m_shapes[i].m_pos.GetX() + 10, m_shapes[i].m_pos.GetY() + 10});
+
+        if (i == 0)
+        {
+            m_textBoxes[i].add("START");
+        }
+        else if (i == 1)
+        {
+            m_textBoxes[i].add("OPTIONS");
+            m_shapes[i].m_size = {130, 50};
+        }
+        else
+        {
+            m_textBoxes[i].add("QUIT");
+        }
     }
     m_ctx->inputHandler->AddCallback(
         StateType::MAIN, "MouseLeft",
@@ -25,10 +40,10 @@ void snake::MainState::onCreate()
 
 void snake::MainState::onDestroy()
 {
-    m_ctx->inputHandler->RemoveBinding(StateType::INTRO,
-                                       "IntroContinue");
-    m_ctx->inputHandler->RemoveCallback(StateType::INTRO,
-                                        "IntroContinue");
+    m_ctx->inputHandler->RemoveBinding(StateType::MAIN,
+                                       "MouseLeft");
+    m_ctx->inputHandler->RemoveCallback(StateType::MAIN,
+                                        "MouseLeft");
 }
 
 void snake::MainState::mouseClick(const gk::EventDetails &details)
@@ -62,9 +77,10 @@ void snake::MainState::mouseClick(const gk::EventDetails &details)
 
 void snake::MainState::draw(SDL_Renderer *renderer)
 {
-    gk::Draw::setRendererColor(renderer, gk::Color::LIME);
+    gk::Draw::setRendererColor(renderer, gk::Color::CRIMSON);
     for (int i = 0; i < 3; ++i)
     {
         gk::Draw::filledRect(renderer, m_shapes[i].m_pos, m_shapes[i].m_size);
+        m_textBoxes[i].draw(renderer);
     }
 }
