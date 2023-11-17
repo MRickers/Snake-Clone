@@ -1,6 +1,7 @@
 #pragma once
 #include <GameKit/core/BaseState.hpp>
-#include "states.hpp"
+#include "states/states.hpp"
+#include "snake.hpp"
 
 namespace snake
 {
@@ -19,6 +20,9 @@ namespace snake
         virtual void draw(SDL_Renderer *) override;
 
     private:
+        void changeDirection(const gk::EventDetails &);
+
         gk::SharedContextPtr m_ctx;
+        snake::Snake m_snake;
     };
 } // namespace snake

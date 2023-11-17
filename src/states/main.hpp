@@ -1,5 +1,5 @@
 #pragma once
-#include "states.hpp"
+#include "states/states.hpp"
 #include <GameKit/core/BaseState.hpp>
 #include <GameKit/helpers/Types.hpp>
 #include <GameKit/helpers/Draw.hpp>

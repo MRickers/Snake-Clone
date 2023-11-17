@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "states/main.hpp"
 #include <spdlog/spdlog.h>
 #include <filesystem>
 
