@@ -13,18 +13,7 @@ namespace snake
         static constexpr auto buttonCount = 3;
 
     public:
-        MainState(gk::SharedContextPtr sharedContext)
-            : m_ctx{sharedContext}
-        {
-            spdlog::info("loading fonts...");
-            for (int i = 0; i < buttonCount; i++)
-            {
-                if (!m_textBoxes[i].loadFont("Roboto-Black.ttf", 25))
-                {
-                    spdlog::warn("could not load textbox font");
-                }
-            }
-        }
+        MainState(gk::SharedContextPtr sharedContext);
 
         void onCreate() override;
         void onDestroy() override;

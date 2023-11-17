@@ -3,7 +3,6 @@
 
 enum class StateType
 {
-    INTRO,
     MAIN,
     GAME,
 };

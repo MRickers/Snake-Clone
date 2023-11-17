@@ -1,5 +1,25 @@
 #include "main.hpp"
 #include <spdlog/spdlog.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+snake::MainState::MainState(gk::SharedContextPtr sharedContext)
+    : m_ctx{sharedContext}
+{
+    // Get the current working directory
+    fs::path currentPath = fs::current_path();
+    spdlog::info("current path: " + currentPath.string());
+
+    spdlog::info("loading fonts...");
+    for (int i = 0; i < buttonCount; i++)
+    {
+        if (!m_textBoxes[i].loadFont("Roboto-Black.ttf", 25))
+        {
+            spdlog::warn("could not load textbox font");
+        }
+    }
+}
 
 void snake::MainState::onCreate()
 {
@@ -60,8 +80,8 @@ void snake::MainState::mouseClick(const gk::EventDetails &details)
         {
             if (i == 0)
             {
-                // m_ctx->stateMachine->switchTo(StateType::GAME);
-                // m_ctx->inputHandler->setCurrentState(StateType::GAME);
+                m_ctx->stateMachine->switchTo(StateType::GAME);
+                m_ctx->inputHandler->setCurrentState(StateType::GAME);
             }
             else if (i == 1)
             {

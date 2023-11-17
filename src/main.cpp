@@ -1,6 +1,8 @@
 #include <spdlog/spdlog.h>
 #include <GameKit/App.hpp>
 #include "states/main.hpp"
+#include "states/game.hpp"
+
 int main()
 {
     const gk::Vector2D windowSize{640, 480};
@@ -18,6 +20,11 @@ int main()
         StateType::MAIN,
         [sharedContext]() -> gk::BaseStatePtr
         { return std::make_unique<snake::MainState>(sharedContext); });
+
+    stateMachine->registerState(
+        StateType::GAME,
+        [sharedContext]() -> gk::BaseStatePtr
+        { return std::make_unique<snake::GameState>(sharedContext); });
 
     app->setInputHandler(inputHandler);
     app->setStateMachine(stateMachine);
