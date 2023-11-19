@@ -5,4 +5,5 @@ enum class StateType
 {
     MAIN,
     GAME,
+    PAUSED,
 };

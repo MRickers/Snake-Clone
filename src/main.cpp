@@ -2,6 +2,7 @@
 #include <GameKit/App.hpp>
 #include "states/main.hpp"
 #include "states/game.hpp"
+#include "states/pause.hpp"
 
 int main()
 {
@@ -25,6 +26,10 @@ int main()
         StateType::GAME,
         [sharedContext]() -> gk::BaseStatePtr
         { return std::make_unique<snake::GameState>(sharedContext); });
+    stateMachine->registerState(
+        StateType::PAUSED,
+        [sharedContext]() -> gk::BaseStatePtr
+        { return std::make_unique<snake::PauseState>(sharedContext); });
 
     app->setInputHandler(inputHandler);
     app->setStateMachine(stateMachine);

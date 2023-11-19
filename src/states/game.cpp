@@ -12,7 +12,7 @@ namespace snake
                                                                m_bounds{m_ctx->app->getWindowSize() / blockSize}
     {
         const auto &[x, y] = m_ctx->app->getWindowSize().Get();
-        m_bounds = {x * .75f / blockSize, y / blockSize};
+        m_bounds = {x * .62f / blockSize, y / blockSize};
     }
 
     void GameState::onCreate()
@@ -64,6 +64,16 @@ namespace snake
                     m_snake.setDirection(Snake::Direction::down);
                 } });
         }
+        {
+            auto binding = gk::EventBinding{.id = "pause"};
+            binding.events.push_back({gk::EventType::KeyDown, SDL_SCANCODE_P});
+            m_ctx->inputHandler->AddBinding(StateType::GAME, binding);
+            m_ctx->inputHandler->AddCallback(StateType::GAME, "pause", [&](const gk::EventDetails &)
+                                             {
+                m_ctx->stateMachine->switchTo(StateType::PAUSED);
+                m_ctx->inputHandler->setCurrentState(StateType::PAUSED); });
+        }
+
         m_timer.Start();
     }
 
