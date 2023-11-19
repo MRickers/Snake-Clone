@@ -3,14 +3,18 @@
 
 namespace snake
 {
+    static constexpr auto blockSize = 16;
+
     GameState::GameState(gk::SharedContextPtr sharedContext) : m_ctx{sharedContext},
-                                                               m_snake{}
+                                                               m_snake{blockSize},
+                                                               m_render{true},
+                                                               m_timer{}
     {
     }
 
     void GameState::onCreate()
     {
-        m_snake.reset(m_ctx->app->getWindowSize() / 2);
+        m_snake.reset(m_ctx->app->getWindowSize() / 2 / 16);
 
         {
             auto binding = gk::EventBinding{.id = "turnLeft"};
@@ -57,6 +61,7 @@ namespace snake
                     m_snake.setDirection(Snake::Direction::down);
                 } });
         }
+        m_timer.Start();
     }
 
     void GameState::onDestroy()
@@ -73,7 +78,14 @@ namespace snake
 
     void GameState::update()
     {
-        m_snake.update();
+        if (m_timer.HasPassed(200))
+        {
+            m_snake.update();
+
+            checkWorldBounds();
+
+            m_timer.Reset();
+        }
     }
 
     void GameState::draw(SDL_Renderer *renderer)
@@ -84,5 +96,18 @@ namespace snake
     void GameState::changeDirection(const gk::EventDetails &details)
     {
         const auto mousePos = details.mouse_pos;
+    }
+    void GameState::checkWorldBounds()
+    {
+        const auto &[x_pos, y_pos] = m_snake.getHeadPos().Get();
+
+        if (x_pos < 0 ||
+            x_pos >= static_cast<int>(m_ctx->app->getWindowSize().GetX() / blockSize) ||
+            y_pos < 0 ||
+            y_pos >= static_cast<int>(m_ctx->app->getWindowSize().GetY() / blockSize))
+        {
+            m_snake.reset({15, 15});
+            m_snake.setDirection(Snake::Direction::up);
+        }
     }
 } // snake

@@ -31,12 +31,12 @@ namespace snake
 
         void setHeadPos(const gk::Vector2D &pos);
         void setDirection(const Snake::Direction);
-        Direction getDirection() const;
-        size_t getSpeed() const;
-        gk::Vector2D getHeadPos() const;
-
-        size_t getLives() const;
         void setLives(const size_t lives);
+
+        gk::Vector2D getHeadPos() const;
+        Direction getDirection() const;
+        size_t getLives() const;
+        size_t getSpeed() const;
 
         void extend();
 

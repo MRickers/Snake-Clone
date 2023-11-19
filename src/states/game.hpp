@@ -1,5 +1,6 @@
 #pragma once
 #include <GameKit/core/BaseState.hpp>
+#include <GameKit/helpers/Timer.hpp>
 #include "states/states.hpp"
 #include "snake.hpp"
 
@@ -21,8 +22,11 @@ namespace snake
 
     private:
         void changeDirection(const gk::EventDetails &);
+        void checkWorldBounds();
 
         gk::SharedContextPtr m_ctx;
         snake::Snake m_snake;
+        bool m_render;
+        gk::Timer m_timer;
     };
 } // namespace snake

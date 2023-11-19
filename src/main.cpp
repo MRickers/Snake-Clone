@@ -28,8 +28,8 @@ int main()
 
     app->setInputHandler(inputHandler);
     app->setStateMachine(stateMachine);
-    stateMachine->switchTo(StateType::MAIN);
-    inputHandler->setCurrentState(StateType::MAIN);
+    stateMachine->switchTo(StateType::GAME);
+    inputHandler->setCurrentState(StateType::GAME);
     try
     {
         app->run();

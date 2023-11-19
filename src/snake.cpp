@@ -1,9 +1,16 @@
 #include "snake.hpp"
 #include <GameKit/helpers/Draw.hpp>
 #include <GameKit/helpers/GameException.hpp>
+#include <spdlog/spdlog.h>
 
 snake::Snake::Snake(const size_t blocksize)
-    : m_size{blocksize}, m_bodyRect{static_cast<float>(m_size - 1), static_cast<float>(m_size - 1)}, m_speed{15}
+    : m_size{blocksize},
+      m_bodyRect{static_cast<float>(m_size - 1), static_cast<float>(m_size - 1)},
+      m_snakeSegments{},
+      m_direction{snake::Snake::Direction::up},
+      m_speed{15},
+      m_lives{3}
+
 {
     reset({5, 7});
 }
@@ -18,6 +25,7 @@ void snake::Snake::update()
     if (const auto segmentIndex = checkCollision(); segmentIndex != 0)
     {
         cut(segmentIndex);
+        --m_lives;
     }
 }
 
@@ -30,11 +38,13 @@ void snake::Snake::draw(SDL_Renderer *renderer)
             gk::Draw::setRendererColor(renderer, gk::Color::GREEN);
             for (const auto &segment : m_snakeSegments)
             {
-                gk::Draw::filledRect(renderer, segment, m_bodyRect);
+                const auto segmentPos = segment * m_size;
+                gk::Draw::filledRect(renderer, segmentPos, m_bodyRect);
             }
 
             gk::Draw::setRendererColor(renderer, gk::Color::YELLOW);
-            gk::Draw::filledRect(renderer, m_snakeSegments.at(0), m_bodyRect);
+            const auto segmentPos = m_snakeSegments.at(0) * m_size;
+            gk::Draw::filledRect(renderer, segmentPos, m_bodyRect);
         }
     }
     else
@@ -51,7 +61,7 @@ void snake::Snake::reset(const gk::Vector2D &startPos)
     m_snakeSegments.push_back(startPos - gk::Vector2D{0, -1});
     m_snakeSegments.push_back(startPos - gk::Vector2D{0, -2});
 
-    m_direction = Snake::Direction::right;
+    m_direction = Snake::Direction::up;
     m_speed = 15;
     m_lives = 3;
 }
@@ -68,7 +78,18 @@ void snake::Snake::setDirection(const Snake::Direction dir)
 
 snake::Snake::Direction snake::Snake::getDirection() const
 {
-    return m_direction;
+    const auto &head = m_snakeSegments.at(0);
+    const auto &neck = m_snakeSegments.at(1);
+
+    if (static_cast<int>(head.GetX()) == static_cast<int>(neck.GetX()))
+    {
+        return (static_cast<int>(head.GetY() > static_cast<int>(neck.GetY()))) ? Snake::Direction::down : Snake::Direction::up;
+    }
+    else if (static_cast<int>(head.GetY()) == static_cast<int>(neck.GetY()))
+    {
+        return (static_cast<int>(head.GetX() > static_cast<int>(neck.GetX()))) ? Snake::Direction::right : Snake::Direction::left;
+    }
+    throw gk::GameException{"snake invalid direction", -100};
 }
 
 size_t snake::Snake::getSpeed() const
@@ -198,5 +219,4 @@ void snake::Snake::cut(const size_t segment)
 {
     m_snakeSegments.erase(m_snakeSegments.begin() + segment,
                           m_snakeSegments.end());
-    --m_lives;
 }
