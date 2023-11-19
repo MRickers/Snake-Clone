@@ -23,10 +23,11 @@ namespace snake
     private:
         void changeDirection(const gk::EventDetails &);
         void checkWorldBounds();
+        void renderBounds(SDL_Renderer *);
 
         gk::SharedContextPtr m_ctx;
         snake::Snake m_snake;
-        bool m_render;
         gk::Timer m_timer;
+        gk::Vector2D m_bounds;
     };
 } // namespace snake

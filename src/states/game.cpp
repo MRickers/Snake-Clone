@@ -1,5 +1,6 @@
 #include "states/game.hpp"
 #include "game.hpp"
+#include <GameKit/helpers/Draw.hpp>
 
 namespace snake
 {
@@ -7,9 +8,11 @@ namespace snake
 
     GameState::GameState(gk::SharedContextPtr sharedContext) : m_ctx{sharedContext},
                                                                m_snake{blockSize},
-                                                               m_render{true},
-                                                               m_timer{}
+                                                               m_timer{},
+                                                               m_bounds{m_ctx->app->getWindowSize() / blockSize}
     {
+        const auto &[x, y] = m_ctx->app->getWindowSize().Get();
+        m_bounds = {x * .75f / blockSize, y / blockSize};
     }
 
     void GameState::onCreate()
@@ -91,23 +94,49 @@ namespace snake
     void GameState::draw(SDL_Renderer *renderer)
     {
         m_snake.draw(renderer);
+        renderBounds(renderer);
     }
 
     void GameState::changeDirection(const gk::EventDetails &details)
     {
         const auto mousePos = details.mouse_pos;
     }
+
     void GameState::checkWorldBounds()
     {
         const auto &[x_pos, y_pos] = m_snake.getHeadPos().Get();
 
-        if (x_pos < 0 ||
-            x_pos >= static_cast<int>(m_ctx->app->getWindowSize().GetX() / blockSize) ||
-            y_pos < 0 ||
-            y_pos >= static_cast<int>(m_ctx->app->getWindowSize().GetY() / blockSize))
+        if (x_pos <= 0 ||
+            x_pos >= static_cast<int>(m_bounds.GetX()) - 1 ||
+            y_pos <= 0 ||
+            y_pos >= static_cast<int>(m_bounds.GetY()) - 1)
         {
             m_snake.reset({15, 15});
             m_snake.setDirection(Snake::Direction::up);
+        }
+    }
+
+    void GameState::renderBounds(SDL_Renderer *renderer)
+    {
+        const auto &[size_x, size_y] = m_bounds.Get();
+
+        gk::Draw::setRendererColor(renderer, gk::Color::MAROON);
+
+        bool draw = false;
+        for (int i = 0; i < static_cast<int>(size_x); i++)
+        {
+            for (int j = 0; j < static_cast<int>(size_y); j++)
+            {
+                if (i == 0 ||
+                    j == 0 ||
+                    i == static_cast<int>(size_x) - 1 ||
+                    j == static_cast<int>(size_y) - 1)
+                {
+                    gk::Draw::filledRect(renderer,
+                                         {static_cast<float>(i) * blockSize, static_cast<float>(j) * blockSize},
+                                         {blockSize - 1, blockSize - 1});
+                }
+            }
         }
     }
 } // snake
