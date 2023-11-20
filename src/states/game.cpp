@@ -5,7 +5,7 @@
 
 namespace snake
 {
-    static constexpr auto blockSize = 16;
+    static constexpr auto blockSize = 24;
 
     GameState::GameState(gk::SharedContextPtr sharedContext) : m_ctx{sharedContext},
                                                                m_snake{blockSize},
@@ -131,7 +131,7 @@ namespace snake
             y_pos <= 0 ||
             y_pos >= static_cast<int>(m_bounds.GetY()) - 1)
         {
-            m_snake.reset({15, 15});
+            m_snake.reset({static_cast<int>(m_bounds.GetX() / 2), static_cast<int>(m_bounds.GetY() / 2)});
             m_snake.setDirection(Snake::Direction::up);
         }
     }
