@@ -1,5 +1,6 @@
 #include "states/game.hpp"
 #include "game.hpp"
+#include "apple.hpp"
 #include <GameKit/helpers/Draw.hpp>
 
 namespace snake
@@ -9,15 +10,18 @@ namespace snake
     GameState::GameState(gk::SharedContextPtr sharedContext) : m_ctx{sharedContext},
                                                                m_snake{blockSize},
                                                                m_timer{},
-                                                               m_bounds{m_ctx->app->getWindowSize() / blockSize}
+                                                               m_bounds{m_ctx->app->getWindowSize() / blockSize},
+                                                               m_apple{blockSize}
     {
         const auto &[x, y] = m_ctx->app->getWindowSize().Get();
         m_bounds = {x * .62f / blockSize, y / blockSize};
+        m_apple.setMinMax(1, static_cast<int>(m_bounds.GetX()) - 2, static_cast<int>(m_bounds.GetY()) - 2);
     }
 
     void GameState::onCreate()
     {
         m_snake.reset(m_ctx->app->getWindowSize() / 2 / 16);
+        m_apple.resetPosition(&m_snake);
 
         {
             auto binding = gk::EventBinding{.id = "turnLeft"};
@@ -97,6 +101,16 @@ namespace snake
 
             checkWorldBounds();
 
+            const auto &[snake_x, snake_y] = m_snake.getHeadPos().Get();
+            const auto &[apple_x, apple_y] = m_apple.getPosition().Get();
+
+            if (static_cast<int>(snake_x) == static_cast<int>(apple_x) &&
+                static_cast<int>(snake_y) == static_cast<int>(apple_y))
+            {
+                m_snake.extend();
+                m_apple.resetPosition(&m_snake);
+            }
+
             m_timer.Reset();
         }
     }
@@ -104,12 +118,8 @@ namespace snake
     void GameState::draw(SDL_Renderer *renderer)
     {
         m_snake.draw(renderer);
+        m_apple.draw(renderer);
         renderBounds(renderer);
-    }
-
-    void GameState::changeDirection(const gk::EventDetails &details)
-    {
-        const auto mousePos = details.mouse_pos;
     }
 
     void GameState::checkWorldBounds()

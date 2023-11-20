@@ -7,10 +7,9 @@
 class SDL_Renderer;
 namespace snake
 {
+    using SnakeContainer = std::vector<gk::Vector2D>;
     class Snake
     {
-        using SnakeContainer = std::vector<gk::Vector2D>;
-
     public:
         enum class Direction
         {
@@ -37,6 +36,7 @@ namespace snake
         Direction getDirection() const;
         size_t getLives() const;
         size_t getSpeed() const;
+        SnakeContainer getSnake() const;
 
         void extend();
 

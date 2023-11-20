@@ -97,6 +97,11 @@ size_t snake::Snake::getSpeed() const
     return m_speed;
 }
 
+snake::SnakeContainer snake::Snake::getSnake() const
+{
+    return m_snakeSegments;
+}
+
 gk::Vector2D snake::Snake::getHeadPos() const
 {
     return m_snakeSegments.front();
@@ -217,6 +222,8 @@ size_t snake::Snake::checkCollision() const
 
 void snake::Snake::cut(const size_t segment)
 {
-    m_snakeSegments.erase(m_snakeSegments.begin() + segment,
-                          m_snakeSegments.end());
+    for (int i = 0; i < segment; i++)
+    {
+        m_snakeSegments.pop_back();
+    }
 }

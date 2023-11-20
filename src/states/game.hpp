@@ -3,6 +3,7 @@
 #include <GameKit/helpers/Timer.hpp>
 #include "states/states.hpp"
 #include "snake.hpp"
+#include "apple.hpp"
 
 namespace snake
 {
@@ -29,5 +30,6 @@ namespace snake
         snake::Snake m_snake;
         gk::Timer m_timer;
         gk::Vector2D m_bounds;
+        snake::Apple m_apple;
     };
 } // namespace snake

@@ -3,6 +3,8 @@ states/main.cpp
 states/game.cpp
 snake.hpp
 snake.cpp
+apple.hpp
+apple.cpp
 main.cpp
 )
 target_link_libraries(${PROJECT_NAME} libGkCore spdlog::spdlog_header_only)
