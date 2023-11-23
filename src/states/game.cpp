@@ -1,7 +1,10 @@
 #include "states/game.hpp"
 #include "game.hpp"
 #include "apple.hpp"
+
 #include <GameKit/helpers/Draw.hpp>
+#include <spdlog/spdlog.h>
+#include <string>
 
 namespace snake
 {
@@ -11,17 +14,30 @@ namespace snake
                                                                m_snake{blockSize},
                                                                m_timer{},
                                                                m_bounds{m_ctx->app->getWindowSize() / blockSize},
-                                                               m_apple{blockSize}
+                                                               m_apple{blockSize},
+                                                               m_score{{std::chrono::milliseconds{3000},
+                                                                        std::chrono::milliseconds{4000},
+                                                                        20, 10, 5}},
+                                                               m_scoreText{1}
     {
         const auto &[x, y] = m_ctx->app->getWindowSize().Get();
         m_bounds = {x * .62f / blockSize, y / blockSize};
         m_apple.setMinMax(1, static_cast<int>(m_bounds.GetX()) - 2, static_cast<int>(m_bounds.GetY()) - 2);
+
+        if (!m_scoreText.loadFont("Roboto-Black.ttf", 25))
+        {
+            spdlog::warn("could not load textbox font");
+        }
     }
 
     void GameState::onCreate()
     {
         m_snake.reset(m_ctx->app->getWindowSize() / 2 / 16);
         m_apple.resetPosition(&m_snake);
+
+        const auto &[x, y] = m_ctx->app->getWindowSize().Get();
+
+        m_scoreText.setPos({x * 0.7f, y * 0.1f});
 
         {
             auto binding = gk::EventBinding{.id = "turnLeft"};
@@ -109,8 +125,11 @@ namespace snake
             {
                 m_snake.extend();
                 m_apple.resetPosition(&m_snake);
+                ++m_score;
+                m_score.resetTimer();
             }
 
+            m_scoreText.add(std::string{"Score: "} + std::to_string(m_score.getScore()));
             m_timer.Reset();
         }
     }
@@ -120,6 +139,7 @@ namespace snake
         m_snake.draw(renderer);
         m_apple.draw(renderer);
         renderBounds(renderer);
+        m_scoreText.draw(renderer);
     }
 
     void GameState::checkWorldBounds()
@@ -131,8 +151,10 @@ namespace snake
             y_pos <= 0 ||
             y_pos >= static_cast<int>(m_bounds.GetY()) - 1)
         {
-            m_snake.reset({static_cast<int>(m_bounds.GetX() / 2), static_cast<int>(m_bounds.GetY() / 2)});
+            m_snake.reset(gk::Vector2D(static_cast<int>(m_bounds.GetX() / 2), static_cast<int>(m_bounds.GetY() / 2)));
             m_snake.setDirection(Snake::Direction::up);
+            m_score.setScore(0);
+            m_score.resetTimer();
         }
     }
 

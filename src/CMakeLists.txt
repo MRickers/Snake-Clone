@@ -5,6 +5,8 @@ snake.hpp
 snake.cpp
 apple.hpp
 apple.cpp
+score.hpp
+score.cpp
 main.cpp
 )
 target_link_libraries(${PROJECT_NAME} libGkCore spdlog::spdlog_header_only)

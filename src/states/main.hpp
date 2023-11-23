@@ -4,7 +4,6 @@
 #include <GameKit/helpers/Types.hpp>
 #include <GameKit/helpers/Draw.hpp>
 #include <GameKit/core/ui/TextBox.hpp>
-#include <spdlog/spdlog.h>
 
 namespace snake
 {

@@ -1,9 +1,11 @@
 #pragma once
 #include <GameKit/core/BaseState.hpp>
 #include <GameKit/helpers/Timer.hpp>
+#include <GameKit/core/ui/TextBox.hpp>
 #include "states/states.hpp"
 #include "snake.hpp"
 #include "apple.hpp"
+#include "score.hpp"
 
 namespace snake
 {
@@ -31,5 +33,7 @@ namespace snake
         gk::Timer m_timer;
         gk::Vector2D m_bounds;
         snake::Apple m_apple;
+        Score m_score;
+        gk::TextBox m_scoreText;
     };
 } // namespace snake
