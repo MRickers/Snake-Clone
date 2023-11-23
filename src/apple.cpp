@@ -1,5 +1,6 @@
 #include "apple.hpp"
 #include <random>
+#include <cmath>
 
 #include "snake.hpp"
 #include <GameKit/helpers/Draw.hpp>
@@ -19,20 +20,22 @@ gk::Vector2D snake::Apple::getPosition() const
 
 void snake::Apple::resetPosition(const snake::Snake *snake)
 {
-    while (true)
+    bool collide = true;
+    while (collide)
     {
         const auto newPos = spawnNew();
+        collide = false;
 
         for (const auto &segment : snake->getSnake())
         {
             if (static_cast<int>(newPos.GetX()) == static_cast<int>(segment.GetX()) &&
                 static_cast<int>(newPos.GetY()) == static_cast<int>(segment.GetY()))
             {
-                continue;
+                collide = true;
+                break;
             }
         }
         m_pos = newPos;
-        break;
     }
 }
 
